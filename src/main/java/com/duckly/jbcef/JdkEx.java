@@ -1,4 +1,4 @@
-package com.jetbrains.cef;
+package com.duckly.jbcef;
 
 import org.cef.OS;
 import sun.awt.AWTAccessor;
@@ -21,9 +21,9 @@ public class JdkEx {
     public static final boolean INVOKE_ON_EDT_TIMEOUT_LOG;
 
     static {
-        int timeout = Integer.getInteger("com.jetbrains.cef.invokeOnEdtTimeout", 200);
+        int timeout = Integer.getInteger("com.duckly.jbcef.invokeOnEdtTimeout", 200);
         INVOKE_ON_EDT_TIMEOUT = timeout > 0 ? timeout : Integer.MAX_VALUE;
-        INVOKE_ON_EDT_TIMEOUT_LOG = Boolean.getBoolean("com.jetbrains.cef.invokeOnEdtTimeout.log.enabled");
+        INVOKE_ON_EDT_TIMEOUT_LOG = Boolean.getBoolean("com.duckly.jbcef.invokeOnEdtTimeout.log.enabled");
     }
 
     public static class InvokeOnToolkitHelperAccessor {

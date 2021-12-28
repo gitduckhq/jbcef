@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.ui.jcef;
+package com.duckly.jbcef;
 
 import com.intellij.application.options.RegistryManager;
 import com.intellij.openapi.Disposable;
@@ -9,7 +9,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
-import com.jetbrains.cef.JCefAppConfig;
 import org.cef.CefApp;
 import org.cef.CefSettings;
 import org.cef.CefSettings.LogSeverity;
@@ -32,7 +31,7 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
-import static com.intellij.ui.jcef.JBCefFileSchemeHandler.FILE_SCHEME_NAME;
+import static com.duckly.jbcef.JBCefFileSchemeHandler.FILE_SCHEME_NAME;
 
 /**
  * A wrapper over {@link CefApp}.

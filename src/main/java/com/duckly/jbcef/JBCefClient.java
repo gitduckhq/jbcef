@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.ui.jcef;
+package com.duckly.jbcef;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
@@ -170,6 +170,13 @@ public class JBCefClient implements JBCefDisposable {
         public boolean onConsoleMessage(CefBrowser browser, CefSettings.LogSeverity level, String message, String source, int line) {
           return myDisplayHandler.handleNotNull(browser, handler -> {
             return handler.onConsoleMessage(browser, level, message, source, line);
+          });
+        }
+
+        @Override
+        public boolean onCursorChange(CefBrowser cefBrowser, int cursorType) {
+          return myDisplayHandler.handleNotNull(browser, handler -> {
+            return handler.onCursorChange(browser, cursorType);
           });
         }
       });
@@ -416,6 +423,13 @@ public class JBCefClient implements JBCefDisposable {
           });
         }
 
+        @Override
+        public boolean onOpenURLFromTab(CefBrowser browser, CefFrame frame, String target_url, boolean user_gesture) {
+          return myRequestHandler.handleNotNull(browser, handler -> {
+            return handler.onOpenURLFromTab(browser, frame, target_url, user_gesture);
+          });
+        }
+
         @Nullable
         @Override
         public CefResourceRequestHandler getResourceRequestHandler(CefBrowser browser,
@@ -447,7 +461,7 @@ public class JBCefClient implements JBCefDisposable {
         }
 
         @Override
-        public boolean onQuotaRequest(CefBrowser browser, String origin_url, long new_size, CefRequestCallback callback) {
+        public boolean onQuotaRequest(CefBrowser browser, String origin_url, long new_size, CefCallback callback) {
           return myRequestHandler.handleNotNull(browser, handler -> {
             return handler.onQuotaRequest(browser, origin_url, new_size, callback);
           });
@@ -457,7 +471,7 @@ public class JBCefClient implements JBCefDisposable {
         public boolean onCertificateError(CefBrowser browser,
                                           CefLoadHandler.ErrorCode cert_error,
                                           String request_url,
-                                          CefRequestCallback callback) {
+                                          CefCallback callback) {
           return myRequestHandler.handleNotNull(browser, handler -> {
             return handler.onCertificateError(browser, cert_error, request_url, callback);
           });
