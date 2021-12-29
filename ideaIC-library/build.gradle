@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+jar {
+    zip64 = true
+}
+
+shadowJar {
+    zip64 = true
+}
+
+repositories {
+    mavenCentral()
+    maven { url = "https://www.jetbrains.com/intellij-repository/releases" }
+}
+
+configurations {
+    ideaIC
+}
+
+task installDependencies(type: Sync) {
+    dependsOn configurations.ideaIC
+    from {
+        configurations.ideaIC.collect { zipTree(it) }
+    }
+    into "$buildDir/idea"
+}
+
+dependencies {
+    ideaIC group: "com.jetbrains.intellij.idea", name: "ideaIC", version: "2020.2", ext: "zip"
+    implementation fileTree(tasks.installDependencies.outputs.files.singleFile) {
+        builtBy tasks.installDependencies
+        include "**/*.jar"
+    }
+}

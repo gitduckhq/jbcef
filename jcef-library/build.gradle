@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'de.undercouch.download' version '4.1.2'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+}
+
+task downloadJcef(type: Download) {
+    src 'https://github.com/jcefmaven/jcefbuild/releases/download/1.0.18/windows-amd64.tar.gz'
+    dest buildDir
+    overwrite false
+}
+
+task decompressJcef(type: Copy) {
+    dependsOn tasks.downloadJcef
+    from tarTree(resources.gzip(tasks.downloadJcef.outputs.files.singleFile))
+    into "$buildDir/jcef"
+}
+
+dependencies {
+    implementation fileTree(tasks.decompressJcef.outputs.files.singleFile) {
+        builtBy tasks.decompressJcef
+        include "**/*.jar"
+    }
+}

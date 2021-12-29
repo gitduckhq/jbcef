@@ -1,1 +1,3 @@
+include 'jcef-library'
+include 'ideaIC-library'
 rootProject.name = 'jbcef'
