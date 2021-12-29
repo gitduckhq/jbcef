@@ -173,7 +173,7 @@ public class JBCefCookieManager {
 
     myLock.lock();
     try {
-      Future<@NotNull Boolean> future = myExecutorService.submit(() -> {
+      Future<Boolean> future = myExecutorService.submit(() -> {
         if (checkFunction.apply(timeout / 2)) {
           LOG.debug("Cookie is already set");
           return true;
@@ -304,7 +304,7 @@ public class JBCefCookieManager {
     myLock.lock();
 
     try {
-      Future<@NotNull Boolean> future = myExecutorService.submit(() -> {
+      Future<Boolean> future = myExecutorService.submit(() -> {
         if (checkFunction.apply(timeout / 2)) {
           LOG.debug("No cookies to be deleted");
           return true;

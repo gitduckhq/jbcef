@@ -153,7 +153,7 @@ class JBCefFileSchemeHandler extends CefResourceHandlerAdapter implements Dispos
   }
 
   @Override
-  public boolean readResponse(byte@NotNull[] data_out, int bytes_to_read, IntRef bytes_read, CefCallback callback) {
+  public boolean readResponse(byte[] data_out, int bytes_to_read, IntRef bytes_read, CefCallback callback) {
     try {
       int availableSize = myInputStream != null ? myInputStream.available() : 0;
       if (availableSize > 0) {

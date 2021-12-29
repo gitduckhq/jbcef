@@ -84,7 +84,7 @@ public class JBCefBrowser implements JBCefDisposable {
   private final ReentrantLock myCookieManagerLock = new ReentrantLock();
 
   private static final LazyInitializer.NotNullValue<String> ERROR_PAGE_READER =
-    new LazyInitializer.NotNullValue<>() {
+    new LazyInitializer.NotNullValue<String>() {
       @Override
       public @NotNull String initialize() {
         try {
@@ -128,15 +128,15 @@ public class JBCefBrowser implements JBCefDisposable {
 
   private static final class ShortcutProvider {
     // Since these CefFrame::* methods are available only with JCEF API 1.1 and higher, we are adding no shortcuts for older JCEF
-    private static final List<Pair<String, AnAction>> ourActions = isSupportedByJCefApi() ? List.of(
+    private static final List<Pair<String, AnAction>> ourActions = isSupportedByJCefApi() ? Arrays.asList(
       createAction("$Cut", CefFrame::cut),
       createAction("$Copy", CefFrame::copy),
       createAction("$Paste", CefFrame::paste),
-      createAction("$Delete", CefFrame::delete),
-      createAction("$SelectAll", CefFrame::selectAll),
+//      createAction("$Delete", CefFrame::delete),
+//      createAction("$SelectAll", CefFrame::selectAll),
       createAction("$Undo", CefFrame::undo),
       createAction("$Redo", CefFrame::redo)
-    ) : List.of();
+    ) : Collections.emptyList();
 
     // This method may be deleted when JCEF API version check is included into JBCefApp#isSupported
     private static boolean isSupportedByJCefApi() {

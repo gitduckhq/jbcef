@@ -299,6 +299,13 @@ public class JBCefClient implements JBCefDisposable {
             return handler.onConsoleMessage(browser, level, message, source, line);
           });
         }
+
+        @Override
+        public boolean onCursorChange(CefBrowser cefBrowser, int cursorType) {
+          return myDisplayHandler.handleBoolean(browser, handler -> {
+            return handler.onCursorChange(browser, cursorType);
+          });
+        }
       });
     });
   }
@@ -543,6 +550,13 @@ public class JBCefClient implements JBCefDisposable {
           });
         }
 
+        @Override
+        public boolean onOpenURLFromTab(CefBrowser cefBrowser, CefFrame frame, String s, boolean b) {
+          return myRequestHandler.handleBoolean(browser, handler -> {
+            return handler.onOpenURLFromTab(browser, frame, s, b);
+          });
+        }
+
         @Nullable
         @Override
         public CefResourceRequestHandler getResourceRequestHandler(CefBrowser browser,
@@ -574,7 +588,7 @@ public class JBCefClient implements JBCefDisposable {
         }
 
         @Override
-        public boolean onQuotaRequest(CefBrowser browser, String origin_url, long new_size, CefRequestCallback callback) {
+        public boolean onQuotaRequest(CefBrowser browser, String origin_url, long new_size, CefCallback callback) {
           return myRequestHandler.handleBoolean(browser, handler -> {
             return handler.onQuotaRequest(browser, origin_url, new_size, callback);
           });
@@ -584,7 +598,7 @@ public class JBCefClient implements JBCefDisposable {
         public boolean onCertificateError(CefBrowser browser,
                                           CefLoadHandler.ErrorCode cert_error,
                                           String request_url,
-                                          CefRequestCallback callback) {
+                                          CefCallback callback) {
           return myRequestHandler.handleBoolean(browser, handler -> {
             return handler.onCertificateError(browser, cert_error, request_url, callback);
           });

@@ -33,6 +33,8 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -131,8 +133,10 @@ public final class JBCefApp {
     CefSettings settings = config.getCefSettings();
     settings.windowless_rendering_enabled = isOffScreenRenderingMode();
     settings.log_severity = getLogLevel();
+    LocalDateTime now = LocalDateTime.now();
+    String formattedNow = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     settings.log_file = System.getProperty("ide.browser.jcef.log.path",
-      System.getProperty("user.home") + Platform.current().fileSeparator + "jcef_" + ProcessHandle.current().pid() + ".log");
+      System.getProperty("user.home") + Platform.current().fileSeparator + "jcef_" + formattedNow + ".log");
     Color bg = JBColor.background();
     settings.background_color = settings.new ColorType(bg.getAlpha(), bg.getRed(), bg.getGreen(), bg.getBlue());
     int port = Registry.intValue("ide.browser.jcef.debug.port");
@@ -263,37 +267,37 @@ public final class JBCefApp {
       {
         return unsupported.apply("JCEF is manually disabled in headless env via 'ide.browser.jcef.headless.enabled=false'");
       }
-      String version;
-      try {
-        version = JCefAppConfig.getVersion();
-      }
-      catch (NoSuchMethodError e) {
-        return unsupported.apply("JCEF runtime version is not supported");
-      }
-      if (version == null) {
-        return unsupported.apply("JCEF runtime version is not available");
-      }
-      String[] split = version.split("\\.");
-      if (split.length == 0) {
-        return unsupported.apply("JCEF runtime version has wrong format: " + version);
-      }
-      try {
-        int majorVersion = Integer.parseInt(split[0]);
-        if (MIN_SUPPORTED_CEF_MAJOR_VERSION > majorVersion) {
-          return unsupported.apply("JCEF minimum supported major version is " + MIN_SUPPORTED_CEF_MAJOR_VERSION +
-                                   ", current is " + majorVersion);
-        }
-      }
-      catch (NumberFormatException e) {
-        return unsupported.apply("JCEF runtime version has wrong format: " + version);
-      }
-
-      String path = JCefAppConfig.class.getResource("JCefAppConfig.class").toString();
-      String name = JCefAppConfig.class.getName().replace('.', '/');
-      boolean isJbrModule = path != null && path.contains("/jcef/" + name);
-      if (!isJbrModule) {
-        return unsupported.apply("JCEF runtime library is not a JBR module");
-      }
+//      String version;
+//      try {
+//        version = JCefAppConfig.getVersion();
+//      }
+//      catch (NoSuchMethodError e) {
+//        return unsupported.apply("JCEF runtime version is not supported");
+//      }
+//      if (version == null) {
+//        return unsupported.apply("JCEF runtime version is not available");
+//      }
+//      String[] split = version.split("\\.");
+//      if (split.length == 0) {
+//        return unsupported.apply("JCEF runtime version has wrong format: " + version);
+//      }
+//      try {
+//        int majorVersion = Integer.parseInt(split[0]);
+//        if (MIN_SUPPORTED_CEF_MAJOR_VERSION > majorVersion) {
+//          return unsupported.apply("JCEF minimum supported major version is " + MIN_SUPPORTED_CEF_MAJOR_VERSION +
+//                                   ", current is " + majorVersion);
+//        }
+//      }
+//      catch (NumberFormatException e) {
+//        return unsupported.apply("JCEF runtime version has wrong format: " + version);
+//      }
+//
+//      String path = JCefAppConfig.class.getResource("JCefAppConfig.class").toString();
+//      String name = JCefAppConfig.class.getName().replace('.', '/');
+//      boolean isJbrModule = path != null && path.contains("/jcef/" + name);
+//      if (!isJbrModule) {
+//        return unsupported.apply("JCEF runtime library is not a JBR module");
+//      }
       ourSupported = new AtomicBoolean(true);
       return true;
     }
@@ -350,7 +354,7 @@ public final class JBCefApp {
   }
 
   private static class MyCefAppHandler extends CefAppHandlerAdapter {
-    MyCefAppHandler(String @Nullable[] args) {
+    MyCefAppHandler(String[] args) {
       super(args);
     }
 
