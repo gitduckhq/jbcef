@@ -1,13 +1,13 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.ui.jcef;
+package com.duckly.jbcef;
 
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.URLUtil;
-import org.cef.browser.CefBrowser;
-import org.cef.browser.CefFrame;
-import org.cef.callback.CefSchemeHandlerFactory;
-import org.cef.handler.CefResourceHandler;
-import org.cef.network.CefRequest;
+import com.duckly.cef.browser.CefBrowser;
+import com.duckly.cef.browser.CefFrame;
+import com.duckly.cef.callback.CefSchemeHandlerFactory;
+import com.duckly.cef.handler.CefResourceHandler;
+import com.duckly.cef.network.CefRequest;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;

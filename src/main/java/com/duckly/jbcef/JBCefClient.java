@@ -1,21 +1,21 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.ui.jcef;
+package com.duckly.jbcef;
 
 import com.intellij.application.options.RegistryManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
-import com.intellij.ui.jcef.JBCefJSQuery.JSQueryFunc;
+import com.duckly.jbcef.JBCefJSQuery.JSQueryFunc;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.hash.LinkedHashMap;
-import org.cef.CefClient;
-import org.cef.CefSettings;
-import org.cef.browser.CefBrowser;
-import org.cef.browser.CefFrame;
-import org.cef.callback.*;
-import org.cef.handler.*;
-import org.cef.misc.BoolRef;
-import org.cef.network.CefRequest;
+import com.duckly.cef.CefClient;
+import com.duckly.cef.CefSettings;
+import com.duckly.cef.browser.CefBrowser;
+import com.duckly.cef.browser.CefFrame;
+import com.duckly.cef.callback.*;
+import com.duckly.cef.handler.*;
+import com.duckly.cef.misc.BoolRef;
+import com.duckly.cef.network.CefRequest;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

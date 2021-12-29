@@ -1,12 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.ui.jcef;
+package com.duckly.jbcef;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.concurrency.AppExecutorUtil;
-import org.cef.callback.CefCookieVisitor;
-import org.cef.misc.BoolRef;
-import org.cef.network.CefCookie;
-import org.cef.network.CefCookieManager;
+import com.duckly.cef.callback.CefCookieVisitor;
+import com.duckly.cef.misc.BoolRef;
+import com.duckly.cef.network.CefCookie;
+import com.duckly.cef.network.CefCookieManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

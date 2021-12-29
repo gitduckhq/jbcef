@@ -1,12 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.ui.jcef;
+package com.duckly.jbcef;
 
 import com.intellij.openapi.Disposable;
-import org.cef.callback.CefCallback;
-import org.cef.handler.CefResourceHandlerAdapter;
-import org.cef.network.CefRequest;
+import com.duckly.cef.callback.CefCallback;
+import com.duckly.cef.handler.CefResourceHandlerAdapter;
+import com.duckly.cef.network.CefRequest;
 
-import static com.intellij.ui.jcef.JBCefSourceSchemeHandlerFactory.SOURCE_SCHEME;
+import static com.duckly.jbcef.JBCefSourceSchemeHandlerFactory.SOURCE_SCHEME;
 
 class JBCefSourceSchemeHandler extends CefResourceHandlerAdapter implements Disposable {
   @Override

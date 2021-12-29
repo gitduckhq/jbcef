@@ -1,5 +1,5 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.ui.jcef;
+package com.duckly.jbcef;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,14 +14,14 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.LazyInitializer;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.cef.JCefAppConfig;
-import com.jetbrains.cef.JCefVersionDetails;
-import org.cef.browser.CefBrowser;
-import org.cef.browser.CefFrame;
-import org.cef.callback.CefContextMenuParams;
-import org.cef.callback.CefMenuModel;
-import org.cef.handler.*;
-import org.cef.network.CefRequest;
+import com.duckly.jbcef.JCefAppConfig;
+import com.duckly.jbcef.JCefVersionDetails;
+import com.duckly.cef.browser.CefBrowser;
+import com.duckly.cef.browser.CefFrame;
+import com.duckly.cef.callback.CefContextMenuParams;
+import com.duckly.cef.callback.CefMenuModel;
+import com.duckly.cef.handler.*;
+import com.duckly.cef.network.CefRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,8 +36,8 @@ import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
-import static com.intellij.ui.jcef.JBCefEventUtils.*;
-import static org.cef.callback.CefMenuModel.MenuId.MENU_ID_USER_LAST;
+import static com.duckly.jbcef.JBCefEventUtils.*;
+import static com.duckly.cef.callback.CefMenuModel.MenuId.MENU_ID_USER_LAST;
 
 /**
  * A wrapper over {@link CefBrowser}.

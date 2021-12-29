@@ -1,5 +1,5 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.ui.jcef;
+package com.duckly.jbcef;
 
 import com.intellij.application.options.RegistryManager;
 import com.intellij.execution.Platform;
@@ -18,13 +18,13 @@ import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
-import com.jetbrains.cef.JCefAppConfig;
-import org.cef.CefApp;
-import org.cef.CefSettings;
-import org.cef.CefSettings.LogSeverity;
-import org.cef.callback.CefSchemeHandlerFactory;
-import org.cef.callback.CefSchemeRegistrar;
-import org.cef.handler.CefAppHandlerAdapter;
+import com.duckly.jbcef.JCefAppConfig;
+import com.duckly.cef.CefApp;
+import com.duckly.cef.CefSettings;
+import com.duckly.cef.CefSettings.LogSeverity;
+import com.duckly.cef.callback.CefSchemeHandlerFactory;
+import com.duckly.cef.callback.CefSchemeRegistrar;
+import com.duckly.cef.handler.CefAppHandlerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ApiStatus;
@@ -52,7 +52,7 @@ public final class JBCefApp {
   private static final Logger LOG = Logger.getInstance(JBCefApp.class);
 
   static final NotificationGroup NOTIFICATION_GROUP =
-    NotificationGroup.create("JCEF errors", NotificationDisplayType.BALLOON, true, null, null, null, null);
+    new NotificationGroup("JCEF errors", NotificationDisplayType.BALLOON, true, null, null, null, null);
 
   private static final String MISSING_LIBS_SUPPORT_URL = "https://intellij-support.jetbrains.com/hc/en-us/articles/360016421559";
 
