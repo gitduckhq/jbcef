@@ -1,37 +1,44 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.duckly.jbcef;
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.intellij.ui.jcef;
 
 import com.intellij.application.options.RegistryManager;
+import com.intellij.execution.Platform;
+import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.IdeBundle;
+import com.intellij.notification.*;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ComponentManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
+import com.jetbrains.cef.JCefAppConfig;
 import org.cef.CefApp;
 import org.cef.CefSettings;
 import org.cef.CefSettings.LogSeverity;
-import org.cef.browser.CefBrowser;
-import org.cef.browser.CefFrame;
 import org.cef.callback.CefSchemeHandlerFactory;
 import org.cef.callback.CefSchemeRegistrar;
 import org.cef.handler.CefAppHandlerAdapter;
-import org.cef.handler.CefResourceHandler;
-import org.cef.network.CefRequest;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
-
-import static com.duckly.jbcef.JBCefFileSchemeHandler.FILE_SCHEME_NAME;
 
 /**
  * A wrapper over {@link CefApp}.
@@ -41,12 +48,16 @@ import static com.duckly.jbcef.JBCefFileSchemeHandler.FILE_SCHEME_NAME;
  *
  * @author tav
  */
-@ApiStatus.Experimental
 public final class JBCefApp {
   private static final Logger LOG = Logger.getInstance(JBCefApp.class);
 
+  static final NotificationGroup NOTIFICATION_GROUP =
+    NotificationGroup.create("JCEF errors", NotificationDisplayType.BALLOON, true, null, null, null, null);
+
+  private static final String MISSING_LIBS_SUPPORT_URL = "https://intellij-support.jetbrains.com/hc/en-us/articles/360016421559";
+
   // [tav] todo: retrieve the version at compile time from the "jcef" maven lib
-  private static final int MIN_SUPPORTED_CEF_MAJOR_VERSION = 80;
+  private static final int MIN_SUPPORTED_CEF_MAJOR_VERSION = 77;
 
   @NotNull private final CefApp myCefApp;
 
@@ -64,17 +75,84 @@ public final class JBCefApp {
   private static final List<JBCefCustomSchemeHandlerFactory> ourCustomSchemeHandlerFactoryList =
     Collections.synchronizedList(new ArrayList<>());
 
-  private JBCefApp(@NotNull JCefAppConfig config) {
-    CefApp.startup(ArrayUtil.EMPTY_STRING_ARRAY);
+  //fixme use addCefCustomSchemeHandlerFactory method if possible
+  private static final JBCefSourceSchemeHandlerFactory ourSourceSchemeHandlerFactory = new JBCefSourceSchemeHandlerFactory();
+
+  private JBCefApp(@NotNull JCefAppConfig config) throws IllegalStateException {
+    boolean started = false;
+    try {
+      started = CefApp.startup(ArrayUtil.EMPTY_STRING_ARRAY);
+    } catch (UnsatisfiedLinkError e) {
+      LOG.error(e.getMessage());
+    }
+    if (!started) {
+      if (SystemInfoRt.isLinux) {
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+          try {
+            Process proc = Runtime.getRuntime().exec("ldd " + System.getProperty("java.home") + "/lib/libjcef.so");
+            StringBuilder missingLibs = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream(), StandardCharsets.UTF_8))) {
+              String line;
+              String delim = " => ";
+              String prevLib = null;
+              while ((line = reader.readLine()) != null) {
+                if (line.contains("not found") && !line.contains("libjvm")) {
+                  String[] split = line.split(delim);
+                  if (split.length != 2) continue;
+                  String lib = split[0];
+                  if (lib.equals(prevLib)) continue;
+                  if (missingLibs.length() > 0) missingLibs.append(", ");
+                  missingLibs.append(lib);
+                  prevLib = lib;
+                }
+              }
+            }
+            if (proc.waitFor() == 0 && missingLibs.length() > 0) {
+              String msg = IdeBundle.message("notification.content.jcef.missingLibs", missingLibs);
+              Notification notification = NOTIFICATION_GROUP.
+                createNotification(IdeBundle.message("notification.title.jcef.startFailure"), msg, NotificationType.ERROR, null);
+              //noinspection DialogTitleCapitalization
+              notification.addAction(new AnAction(IdeBundle.message("action.jcef.followInstructions")) {
+                @Override
+                public void actionPerformed(@NotNull AnActionEvent e) {
+                  BrowserUtil.open(MISSING_LIBS_SUPPORT_URL);
+                }
+              });
+              notification.notify(null);
+            }
+          }
+          catch (Throwable t) {
+            LOG.error("failed to identify JCEF missing libs", t);
+          }
+        });
+      }
+      throw new IllegalStateException("CefApp failed to start");
+    }
     CefSettings settings = config.getCefSettings();
-    settings.windowless_rendering_enabled = false;
+    settings.windowless_rendering_enabled = isOffScreenRenderingMode();
     settings.log_severity = getLogLevel();
+    settings.log_file = System.getProperty("ide.browser.jcef.log.path",
+      System.getProperty("user.home") + Platform.current().fileSeparator + "jcef_" + ProcessHandle.current().pid() + ".log");
     Color bg = JBColor.background();
     settings.background_color = settings.new ColorType(bg.getAlpha(), bg.getRed(), bg.getGreen(), bg.getBlue());
-    if (ApplicationManager.getApplication().isInternal()) {
-      settings.remote_debugging_port = Registry.intValue("ide.browser.jcef.debug.port");
+    int port = Registry.intValue("ide.browser.jcef.debug.port");
+    if (ApplicationManager.getApplication().isInternal() && port > 0) {
+      settings.remote_debugging_port = port;
     }
-    CefApp.addAppHandler(new MyCefAppHandler(config.getAppArgs()));
+
+    String[] argsFromProviders = JBCefAppRequiredArgumentsProvider
+      .getProviders()
+      .stream()
+      .flatMap(p -> {
+        LOG.debug("got options: [" + p.getOptions().toString() + "] from:" + p.getClass().getName());
+        return p.getOptions().stream();
+      })
+      .distinct()
+      .toArray(String[]::new);
+
+    String[] args = ArrayUtil.mergeArrays(config.getAppArgs(), argsFromProviders);
+
+    CefApp.addAppHandler(new MyCefAppHandler(args));
     myCefApp = CefApp.getInstance(settings);
     Disposer.register(ApplicationManager.getApplication(), myDisposable);
   }
@@ -119,7 +197,7 @@ public final class JBCefApp {
     return Holder.INSTANCE;
   }
 
-  private static class Holder {
+  private static final class Holder {
     @Nullable static final JBCefApp INSTANCE;
 
     static {
@@ -133,7 +211,14 @@ public final class JBCefApp {
           LOG.error(e);
         }
       }
-      INSTANCE = config != null ? new JBCefApp(config) : null;
+      JBCefApp app = null;
+      if (config != null) {
+        try {
+          app = new JBCefApp(config);
+        } catch (IllegalStateException ignore) {
+        }
+      }
+      INSTANCE = app;
     }
   }
 
@@ -147,6 +232,11 @@ public final class JBCefApp {
    */
   public static boolean isSupported() {
     return isSupported(false);
+  }
+
+  private static boolean isJavaFXAlreadyInitialized() {
+    return Thread.getAllStackTraces().keySet().stream()
+      .anyMatch(t -> t.getName().startsWith("JavaFX Application Thread"));
   }
 
   private static boolean isSupported(boolean logging) {
@@ -166,7 +256,12 @@ public final class JBCefApp {
       };
       // warn: do not change to Registry.is(), the method used at startup
       if (!RegistryManager.getInstance().is("ide.browser.jcef.enabled")) {
-        return unsupported.apply("JCEF is manually disabled via 'ide.browser.jcef.enabled'");
+        return unsupported.apply("JCEF is manually disabled via 'ide.browser.jcef.enabled=false'");
+      }
+      if (ApplicationManager.getApplication().isHeadlessEnvironment() &&
+          !RegistryManager.getInstance().is("ide.browser.jcef.headless.enabled"))
+      {
+        return unsupported.apply("JCEF is manually disabled in headless env via 'ide.browser.jcef.headless.enabled=false'");
       }
       String version;
       try {
@@ -207,6 +302,14 @@ public final class JBCefApp {
   @NotNull
   public JBCefClient createClient() {
     return new JBCefClient(myCefApp.createClient());
+  }
+
+  /**
+   * Returns true if JCEF is run in off-screen rendering mode.
+   */
+  @ApiStatus.Experimental
+  public static boolean isOffScreenRenderingMode() {
+    return RegistryManager.getInstance().is("ide.browser.jcef.osr.enabled");
   }
 
   /**
@@ -263,6 +366,7 @@ public final class JBCefApp {
       for (JBCefCustomSchemeHandlerFactory f : ourCustomSchemeHandlerFactoryList) {
         f.registerCustomScheme(registrar);
       }
+      ourSourceSchemeHandlerFactory.registerCustomScheme(registrar);
     }
 
     @Override
@@ -272,12 +376,11 @@ public final class JBCefApp {
       }
       ourCustomSchemeHandlerFactoryList.clear(); // no longer needed
 
-      getInstance().myCefApp.registerSchemeHandlerFactory(FILE_SCHEME_NAME, "", new CefSchemeHandlerFactory() {
-        @Override
-        public CefResourceHandler create(CefBrowser browser, CefFrame frame, String schemeName, CefRequest request) {
-          return FILE_SCHEME_NAME.equals(schemeName) ? new JBCefFileSchemeHandler(browser, frame) : null;
-        }
-      });
+      getInstance().myCefApp.registerSchemeHandlerFactory(
+        ourSourceSchemeHandlerFactory.getSchemeName(), ourSourceSchemeHandlerFactory.getDomainName(), ourSourceSchemeHandlerFactory);
+
+      getInstance().myCefApp.registerSchemeHandlerFactory(
+        JBCefFileSchemeHandlerFactory.FILE_SCHEME_NAME, "", new JBCefFileSchemeHandlerFactory());
     }
   }
 }
