@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'de.undercouch.download' version '4.1.2'
-    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'de.undercouch.download' // version '4.1.2'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 java {
@@ -13,8 +13,30 @@ repositories {
     mavenCentral()
 }
 
+
+static def normalize(String value) {
+    return value
+        ? value.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "")
+        : ""
+}
+
+def osName = normalize(System.getProperty("os.name"))
+def os = osName.startsWith('windows')
+        ? 'windows'
+        : osName.startsWith('macosx') || osName.startsWith('osx')
+        ? 'macosx'
+        : 'linux'
+def osArch = normalize(System.getProperty("os.arch"))
+def arch = osArch.matches('^(x8664|amd64|ia32e|em64t|x64)$')
+        ? 'amd64'
+        : osArch.matches('^(x8632|x86|i[3-6]86|ia32|x32)$')
+        ? 'i386'
+        : osArch.matches('^(arm|arm32)$')
+        ? 'arm'
+        : 'arm64'
+
 task downloadJcef(type: Download) {
-    src 'https://github.com/jcefmaven/jcefbuild/releases/download/1.0.18/windows-amd64.tar.gz'
+    src "https://github.com/jcefmaven/jcefbuild/releases/download/1.0.18/${os}-${arch}.tar.gz"
     dest buildDir
     overwrite false
 }

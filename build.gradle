@@ -19,7 +19,6 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
 }
 
-
 dependencies {
     compileOnly 'org.jetbrains:annotations:22.0.0'
     api project(path: ':jcef-library', configuration: 'shadow')

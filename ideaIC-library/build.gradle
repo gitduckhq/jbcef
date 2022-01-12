@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 java {
@@ -37,6 +37,6 @@ dependencies {
     ideaIC group: "com.jetbrains.intellij.idea", name: "ideaIC", version: "2020.2", ext: "zip"
     implementation fileTree(tasks.installDependencies.outputs.files.singleFile) {
         builtBy tasks.installDependencies
-        include "**/*.jar"
+        include "lib/**/*.jar"
     }
 }
