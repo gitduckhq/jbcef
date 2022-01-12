@@ -1,11 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.duckly.jbcef;
 
-import com.duckly.cef.browser.CefBrowser;
-import com.duckly.cef.browser.CefFrame;
-import com.duckly.cef.callback.CefSchemeRegistrar;
-import com.duckly.cef.handler.CefResourceHandler;
-import com.duckly.cef.network.CefRequest;
+import org.cef.browser.CefBrowser;
+import org.cef.browser.CefFrame;
+import org.cef.callback.CefSchemeRegistrar;
+import org.cef.handler.CefResourceHandler;
+import org.cef.network.CefRequest;
 import org.jetbrains.annotations.NotNull;
 
 class JBCefSourceSchemeHandlerFactory implements JBCefApp.JBCefCustomSchemeHandlerFactory {

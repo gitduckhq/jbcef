@@ -1,8 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.duckly.jbcef;
 
-import com.duckly.cef.handler.CefKeyboardHandler.CefKeyEvent;
-import com.duckly.cef.misc.EventFlags;
+import org.cef.handler.CefKeyboardHandler.CefKeyEvent;
+import org.cef.misc.EventFlags;
 
 import java.awt.*;
 import java.awt.event.InputEvent;

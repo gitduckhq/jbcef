@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.duckly.jbcef;
 
-import com.intellij.application.options.RegistryManager;
+//import com.intellij.application.options.RegistryManager;
 import com.intellij.execution.Platform;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.IdeBundle;
@@ -19,12 +19,12 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
 import com.duckly.jbcef.JCefAppConfig;
-import com.duckly.cef.CefApp;
-import com.duckly.cef.CefSettings;
-import com.duckly.cef.CefSettings.LogSeverity;
-import com.duckly.cef.callback.CefSchemeHandlerFactory;
-import com.duckly.cef.callback.CefSchemeRegistrar;
-import com.duckly.cef.handler.CefAppHandlerAdapter;
+import org.cef.CefApp;
+import org.cef.CefSettings;
+import org.cef.CefSettings.LogSeverity;
+import org.cef.callback.CefSchemeHandlerFactory;
+import org.cef.callback.CefSchemeRegistrar;
+import org.cef.handler.CefAppHandlerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ApiStatus;
@@ -144,17 +144,17 @@ public final class JBCefApp {
       settings.remote_debugging_port = port;
     }
 
-    String[] argsFromProviders = JBCefAppRequiredArgumentsProvider
-      .getProviders()
-      .stream()
-      .flatMap(p -> {
-        LOG.debug("got options: [" + p.getOptions().toString() + "] from:" + p.getClass().getName());
-        return p.getOptions().stream();
-      })
-      .distinct()
-      .toArray(String[]::new);
+//    String[] argsFromProviders = JBCefAppRequiredArgumentsProvider
+//      .getProviders()
+//      .stream()
+//      .flatMap(p -> {
+//        LOG.debug("got options: [" + p.getOptions().toString() + "] from:" + p.getClass().getName());
+//        return p.getOptions().stream();
+//      })
+//      .distinct()
+//      .toArray(String[]::new);
 
-    String[] args = ArrayUtil.mergeArrays(config.getAppArgs(), argsFromProviders);
+    String[] args = config.getAppArgs(); // ArrayUtil.mergeArrays(config.getAppArgs(), argsFromProviders);
 
     CefApp.addAppHandler(new MyCefAppHandler(args));
     myCefApp = CefApp.getInstance(settings);
@@ -259,14 +259,14 @@ public final class JBCefApp {
         return false;
       };
       // warn: do not change to Registry.is(), the method used at startup
-      if (!RegistryManager.getInstance().is("ide.browser.jcef.enabled")) {
-        return unsupported.apply("JCEF is manually disabled via 'ide.browser.jcef.enabled=false'");
-      }
-      if (ApplicationManager.getApplication().isHeadlessEnvironment() &&
-          !RegistryManager.getInstance().is("ide.browser.jcef.headless.enabled"))
-      {
-        return unsupported.apply("JCEF is manually disabled in headless env via 'ide.browser.jcef.headless.enabled=false'");
-      }
+//      if (!RegistryManager.getInstance().is("ide.browser.jcef.enabled")) {
+//        return unsupported.apply("JCEF is manually disabled via 'ide.browser.jcef.enabled=false'");
+//      }
+//      if (ApplicationManager.getApplication().isHeadlessEnvironment() &&
+//          !RegistryManager.getInstance().is("ide.browser.jcef.headless.enabled"))
+//      {
+//        return unsupported.apply("JCEF is manually disabled in headless env via 'ide.browser.jcef.headless.enabled=false'");
+//      }
 //      String version;
 //      try {
 //        version = JCefAppConfig.getVersion();
@@ -313,7 +313,7 @@ public final class JBCefApp {
    */
   @ApiStatus.Experimental
   public static boolean isOffScreenRenderingMode() {
-    return RegistryManager.getInstance().is("ide.browser.jcef.osr.enabled");
+    return false; // RegistryManager.getInstance().is("ide.browser.jcef.osr.enabled");
   }
 
   /**

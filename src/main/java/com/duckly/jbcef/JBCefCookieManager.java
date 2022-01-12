@@ -3,10 +3,10 @@ package com.duckly.jbcef;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.concurrency.AppExecutorUtil;
-import com.duckly.cef.callback.CefCookieVisitor;
-import com.duckly.cef.misc.BoolRef;
-import com.duckly.cef.network.CefCookie;
-import com.duckly.cef.network.CefCookieManager;
+import org.cef.callback.CefCookieVisitor;
+import org.cef.misc.BoolRef;
+import org.cef.network.CefCookie;
+import org.cef.network.CefCookieManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

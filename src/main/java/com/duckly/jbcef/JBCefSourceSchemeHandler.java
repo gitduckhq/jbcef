@@ -2,9 +2,9 @@
 package com.duckly.jbcef;
 
 import com.intellij.openapi.Disposable;
-import com.duckly.cef.callback.CefCallback;
-import com.duckly.cef.handler.CefResourceHandlerAdapter;
-import com.duckly.cef.network.CefRequest;
+import org.cef.callback.CefCallback;
+import org.cef.handler.CefResourceHandlerAdapter;
+import org.cef.network.CefRequest;
 
 import static com.duckly.jbcef.JBCefSourceSchemeHandlerFactory.SOURCE_SCHEME;
 

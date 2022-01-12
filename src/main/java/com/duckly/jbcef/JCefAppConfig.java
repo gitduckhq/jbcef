@@ -2,9 +2,9 @@
 
 package com.duckly.jbcef;
 
-import com.duckly.cef.CefApp;
-import com.duckly.cef.CefSettings;
-import com.duckly.cef.OS;
+import org.cef.CefApp;
+import org.cef.CefSettings;
+import org.cef.OS;
 
 import java.awt.*;
 import java.io.*;
@@ -75,7 +75,7 @@ public abstract class JCefAppConfig {
     }
 
     /**
-     * Returns the full version string before {@link com.duckly.cef.CefApp} is created.
+     * Returns the full version string before {@link org.cef.CefApp} is created.
      * Otherwise use {@link CefApp#getVersion()}.
      */
     public static String getVersion() {
@@ -137,8 +137,8 @@ public abstract class JCefAppConfig {
         protected void init() {
             String JCEF_PATH = System.getProperty("java.home") + "/bin";
             cefSettings.resources_dir_path = JCEF_PATH;
-            cefSettings.locales_dir_path = JCEF_PATH + "/locales";
-            cefSettings.browser_subprocess_path = JCEF_PATH + "/jcef_helper";
+            cefSettings.locales_dir_path = JCEF_PATH + "\\locales";
+            cefSettings.browser_subprocess_path = JCEF_PATH + "\\jcef_helper";
             appArgs.add("--disable-features=SpareRendererForSitePerProcess");
         }
     }

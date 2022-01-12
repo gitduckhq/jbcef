@@ -2,13 +2,13 @@
 package com.duckly.jbcef;
 
 import com.intellij.openapi.util.Disposer;
-import com.duckly.cef.CefClient;
-import com.duckly.cef.browser.CefBrowser;
-import com.duckly.cef.browser.CefFrame;
-import com.duckly.cef.browser.CefMessageRouter;
-import com.duckly.cef.callback.CefQueryCallback;
-import com.duckly.cef.handler.CefMessageRouterHandler;
-import com.duckly.cef.handler.CefMessageRouterHandlerAdapter;
+import org.cef.CefClient;
+import org.cef.browser.CefBrowser;
+import org.cef.browser.CefFrame;
+import org.cef.browser.CefMessageRouter;
+import org.cef.callback.CefQueryCallback;
+import org.cef.handler.CefMessageRouterHandler;
+import org.cef.handler.CefMessageRouterHandlerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

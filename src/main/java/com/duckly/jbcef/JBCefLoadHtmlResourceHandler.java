@@ -2,12 +2,12 @@
 package com.duckly.jbcef;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.duckly.cef.callback.CefCallback;
-import com.duckly.cef.handler.CefResourceHandlerAdapter;
-import com.duckly.cef.misc.IntRef;
-import com.duckly.cef.misc.StringRef;
-import com.duckly.cef.network.CefRequest;
-import com.duckly.cef.network.CefResponse;
+import org.cef.callback.CefCallback;
+import org.cef.handler.CefResourceHandlerAdapter;
+import org.cef.misc.IntRef;
+import org.cef.misc.StringRef;
+import org.cef.network.CefRequest;
+import org.cef.network.CefResponse;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
