@@ -35,13 +35,19 @@ def arch = osArch.matches('^(x8664|amd64|ia32e|em64t|x64)$')
         ? 'arm'
         : 'arm64'
 
-task downloadJcef(type: Download) {
+tasks.register('prepareBuildDir') {
+    mkdir buildDir
+    outputs.dir(buildDir)
+}
+
+tasks.register('downloadJcef', Download) {
+    dependsOn tasks.prepareBuildDir
     src "https://github.com/jcefmaven/jcefbuild/releases/download/1.0.18/${os}-${arch}.tar.gz"
     dest buildDir
     overwrite false
 }
 
-task decompressJcef(type: Copy) {
+tasks.register('decompressJcef', Copy) {
     dependsOn tasks.downloadJcef
     from tarTree(resources.gzip(tasks.downloadJcef.outputs.files.singleFile))
     into "$buildDir/jcef"

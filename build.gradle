@@ -20,12 +20,10 @@ compileTestKotlin {
 }
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations:22.0.0'
+    compileOnly 'org.jetbrains:annotations:23.0.0'
     api project(path: ':jcef-library', configuration: 'shadow')
     api project(path: ':ideaIC-library', configuration: 'shadow')
     implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 repositories {
