@@ -80,7 +80,7 @@ public final class JBCefApp {
   //fixme use addCefCustomSchemeHandlerFactory method if possible
   private static final JBCefSourceSchemeHandlerFactory ourSourceSchemeHandlerFactory = new JBCefSourceSchemeHandlerFactory();
 
-  JBCefApp(@NotNull JCefAppConfig config) throws IllegalStateException {
+  public JBCefApp(@NotNull JCefAppConfig config) throws IllegalStateException {
     boolean started = false;
     try {
       started = CefApp.startup(ArrayUtil.EMPTY_STRING_ARRAY);
@@ -187,44 +187,44 @@ public final class JBCefApp {
     return myDisposable;
   }
 
-  /**
-   * Returns {@code JBCefApp} instance. If the app has not yet been initialized
-   * then starts up CEF and initializes the app.
-   *
-   * @throws IllegalStateException when JCEF initialization is not possible in current env
-   */
-  @NotNull
-  public static JBCefApp getInstance() {
-    if (Holder.INSTANCE == null) {
-      throw new IllegalStateException("JCEF is not supported in this env or failed to initialize");
-    }
-    return Holder.INSTANCE;
-  }
-
-  private static final class Holder {
-    @Nullable static final JBCefApp INSTANCE;
-
-    static {
-      ourInitialized.set(true);
-      JCefAppConfig config = null;
-      if (isSupported(true)) {
-        try {
-          config = JCefAppConfig.getInstance();
-        }
-        catch (Exception e) {
-          LOG.error(e);
-        }
-      }
-      JBCefApp app = null;
-      if (config != null) {
-        try {
-          app = new JBCefApp(config);
-        } catch (IllegalStateException ignore) {
-        }
-      }
-      INSTANCE = app;
-    }
-  }
+//  /**
+//   * Returns {@code JBCefApp} instance. If the app has not yet been initialized
+//   * then starts up CEF and initializes the app.
+//   *
+//   * @throws IllegalStateException when JCEF initialization is not possible in current env
+//   */
+//  @NotNull
+//  public static JBCefApp getInstance() {
+//    if (Holder.INSTANCE == null) {
+//      throw new IllegalStateException("JCEF is not supported in this env or failed to initialize");
+//    }
+//    return Holder.INSTANCE;
+//  }
+//
+//  private static final class Holder {
+//    @Nullable static final JBCefApp INSTANCE;
+//
+//    static {
+//      ourInitialized.set(true);
+//      JCefAppConfig config = null;
+//      if (isSupported(true)) {
+//        try {
+//          config = JCefAppConfig.getInstance();
+//        }
+//        catch (Exception e) {
+//          LOG.error(e);
+//        }
+//      }
+//      JBCefApp app = null;
+//      if (config != null) {
+//        try {
+//          app = new JBCefApp(config);
+//        } catch (IllegalStateException ignore) {
+//        }
+//      }
+//      INSTANCE = app;
+//    }
+//  }
 
   /**
    * Returns whether JCEF is supported. For that:
@@ -305,7 +305,7 @@ public final class JBCefApp {
 
   @NotNull
   public JBCefClient createClient() {
-    return new JBCefClient(myCefApp.createClient());
+    return new JBCefClient(myCefApp.createClient(), myDisposable);
   }
 
   /**

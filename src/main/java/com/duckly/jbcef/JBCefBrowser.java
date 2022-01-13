@@ -186,7 +186,7 @@ public class JBCefBrowser implements JBCefDisposable {
     this(cefBrowser, client, false, null);
   }
 
-  private JBCefBrowser(@NotNull JBCefClient client, boolean isDefaultClient, @Nullable String url) {
+  public JBCefBrowser(@NotNull JBCefClient client, boolean isDefaultClient, @Nullable String url) {
     this(null, client, isDefaultClient, url);
   }
 
@@ -375,22 +375,22 @@ public class JBCefBrowser implements JBCefDisposable {
     cefBrowser.loadURL(url);
   }
 
-  /**
-   * Creates a browser with default {@link JBCefClient}. The default client is disposed with this browser and may not be used with other browsers.
-   */
-  @SuppressWarnings("unused")
-  public JBCefBrowser() {
-    this(JBCefApp.getInstance().createClient(), true, null);
-  }
-
-  /**
-   * @see #JBCefBrowser()
-   * @param url initial url
-   */
-  @SuppressWarnings("unused")
-  public JBCefBrowser(@NotNull String url) {
-    this(JBCefApp.getInstance().createClient(), true, url);
-  }
+//  /**
+//   * Creates a browser with default {@link JBCefClient}. The default client is disposed with this browser and may not be used with other browsers.
+//   */
+//  @SuppressWarnings("unused")
+//  public JBCefBrowser() {
+//    this(JBCefApp.getInstance().createClient(), true, null);
+//  }
+//
+//  /**
+//   * @see #JBCefBrowser()
+//   * @param url initial url
+//   */
+//  @SuppressWarnings("unused")
+//  public JBCefBrowser(@NotNull String url) {
+//    this(JBCefApp.getInstance().createClient(), true, url);
+//  }
 
   @NotNull
   public JComponent getComponent() {

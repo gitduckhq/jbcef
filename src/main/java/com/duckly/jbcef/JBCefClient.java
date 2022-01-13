@@ -2,6 +2,7 @@
 package com.duckly.jbcef;
 
 //import com.intellij.application.options.RegistryManager;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -77,9 +78,9 @@ public class JBCefClient implements JBCefDisposable {
   private final HandlerSupport<CefLoadHandler> myLoadHandler = new HandlerSupport<>();
   private final HandlerSupport<CefRequestHandler> myRequestHandler = new HandlerSupport<>();
 
-  JBCefClient(@NotNull CefClient client) {
+  JBCefClient(@NotNull CefClient client, @NotNull Disposable parentDisposable) {
     myCefClient = client;
-    Disposer.register(JBCefApp.getInstance().getDisposable(), this);
+    Disposer.register(parentDisposable, this);
 
     Runnable createPool = () -> {
       if (myJSQueryPool != null) {

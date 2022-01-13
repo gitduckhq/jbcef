@@ -16,38 +16,31 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Anton Tarasov
  */
 public abstract class JCefAppConfig {
-    protected final CefSettings cefSettings;
+    protected final CefSettings cefSettings = new CefSettings();
     protected final List<String> appArgs = new ArrayList<>();
 
     private static final AtomicReference<Double> forceDeviceScaleFactor = new AtomicReference<>(Double.valueOf(0));
 
-    JCefAppConfig() {
-        this.cefSettings = new CefSettings();
-    }
+//    private static class Holder {
+//        static JCefAppConfig INSTANCE;
+//
+//        static {
+//            INSTANCE = newInstance();
+//            assert INSTANCE != null : "JCEF: unknown platform";
+//        }
+//    }
 
-    JCefAppConfig(JCefAppConfig config) {
-        this.cefSettings = config.cefSettings.clone();
-        this.appArgs.addAll(config.appArgs);
-    }
-
-    private static class Holder {
-        static JCefAppConfig INSTANCE;
-
-        static {
-            if (OS.isMacintosh()) {
-                INSTANCE = new JCefAppConfigMac();
-            }
-            else if (OS.isLinux()) {
-                INSTANCE = new JCefAppConfigLinux();
-            }
-            else if (OS.isWindows()) {
-                INSTANCE = new JCefAppConfigWindows();
-            }
-            else {
-                INSTANCE = null;
-                assert false : "JCEF: unknown platform";
-            }
+    public static JCefAppConfig newInstance() {
+        if (OS.isMacintosh()) {
+            return new JCefAppConfigMac();
         }
+        if (OS.isLinux()) {
+            return new JCefAppConfigLinux();
+        }
+        if (OS.isWindows()) {
+            return new JCefAppConfigWindows();
+        }
+        return null;
     }
 
     public String[] getAppArgs() {
@@ -62,17 +55,17 @@ public abstract class JCefAppConfig {
         return cefSettings;
     }
 
-    /**
-     * @throws IllegalStateException in case of unsupported platform
-     */
-    public static JCefAppConfig getInstance() {
-        if (Holder.INSTANCE != null) {
-            Holder.INSTANCE.init();
-        } else {
-            throw new IllegalStateException("JCEF is not supported on this platform");
-        }
-        return Holder.INSTANCE;
-    }
+//    /**
+//     * @throws IllegalStateException in case of unsupported platform
+//     */
+//    public static JCefAppConfig getInstance() {
+//        if (Holder.INSTANCE != null) {
+//            Holder.INSTANCE.init();
+//        } else {
+//            throw new IllegalStateException("JCEF is not supported on this platform");
+//        }
+//        return Holder.INSTANCE;
+//    }
 
     /**
      * Tries to load full JCEF version string from version.info file
