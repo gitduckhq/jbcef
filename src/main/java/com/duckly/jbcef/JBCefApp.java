@@ -80,7 +80,7 @@ public final class JBCefApp {
   //fixme use addCefCustomSchemeHandlerFactory method if possible
   private static final JBCefSourceSchemeHandlerFactory ourSourceSchemeHandlerFactory = new JBCefSourceSchemeHandlerFactory();
 
-  private JBCefApp(@NotNull JCefAppConfig config) throws IllegalStateException {
+  JBCefApp(@NotNull JCefAppConfig config) throws IllegalStateException {
     boolean started = false;
     try {
       started = CefApp.startup(ArrayUtil.EMPTY_STRING_ARRAY);
@@ -110,11 +110,11 @@ public final class JBCefApp {
               }
             }
             if (proc.waitFor() == 0 && missingLibs.length() > 0) {
-              String msg = IdeBundle.message("notification.content.jcef.missingLibs", missingLibs);
+              String msg = String.format("Missing native libraries: %s", missingLibs);
               Notification notification = NOTIFICATION_GROUP.
-                createNotification(IdeBundle.message("notification.title.jcef.startFailure"), msg, NotificationType.ERROR, null);
+                createNotification("JCEF browser component failed to start", msg, NotificationType.ERROR, null);
               //noinspection DialogTitleCapitalization
-              notification.addAction(new AnAction(IdeBundle.message("action.jcef.followInstructions")) {
+              notification.addAction(new AnAction("Follow the instructions") {
                 @Override
                 public void actionPerformed(@NotNull AnActionEvent e) {
                   BrowserUtil.open(MISSING_LIBS_SUPPORT_URL);
@@ -353,7 +353,7 @@ public final class JBCefApp {
     @NotNull String getDomainName();
   }
 
-  private static class MyCefAppHandler extends CefAppHandlerAdapter {
+  private class MyCefAppHandler extends CefAppHandlerAdapter {
     MyCefAppHandler(String[] args) {
       super(args);
     }
@@ -376,14 +376,14 @@ public final class JBCefApp {
     @Override
     public void onContextInitialized() {
       for (JBCefCustomSchemeHandlerFactory f : ourCustomSchemeHandlerFactoryList) {
-        getInstance().myCefApp.registerSchemeHandlerFactory(f.getSchemeName(), f.getDomainName(), f);
+        JBCefApp.this.myCefApp.registerSchemeHandlerFactory(f.getSchemeName(), f.getDomainName(), f);
       }
       ourCustomSchemeHandlerFactoryList.clear(); // no longer needed
 
-      getInstance().myCefApp.registerSchemeHandlerFactory(
+      JBCefApp.this.myCefApp.registerSchemeHandlerFactory(
         ourSourceSchemeHandlerFactory.getSchemeName(), ourSourceSchemeHandlerFactory.getDomainName(), ourSourceSchemeHandlerFactory);
 
-      getInstance().myCefApp.registerSchemeHandlerFactory(
+      JBCefApp.this.myCefApp.registerSchemeHandlerFactory(
         JBCefFileSchemeHandlerFactory.FILE_SCHEME_NAME, "", new JBCefFileSchemeHandlerFactory());
     }
   }

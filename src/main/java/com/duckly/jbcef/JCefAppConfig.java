@@ -16,10 +16,19 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Anton Tarasov
  */
 public abstract class JCefAppConfig {
-    protected final CefSettings cefSettings = new CefSettings();
+    protected final CefSettings cefSettings;
     protected final List<String> appArgs = new ArrayList<>();
 
     private static final AtomicReference<Double> forceDeviceScaleFactor = new AtomicReference<>(Double.valueOf(0));
+
+    JCefAppConfig() {
+        this.cefSettings = new CefSettings();
+    }
+
+    JCefAppConfig(JCefAppConfig config) {
+        this.cefSettings = config.cefSettings.clone();
+        this.appArgs.addAll(config.appArgs);
+    }
 
     private static class Holder {
         static JCefAppConfig INSTANCE;
